@@ -2,6 +2,7 @@ import tkinter as tk
 import pyautogui
 import win32clipboard
 import io
+from datetime import datetime
 
 # Functions
 def take_screenshot_clipboard():
@@ -25,8 +26,13 @@ def copy_to_clipboard(image):
 
 def take_screenshot_save():
     screenshot = pyautogui.screenshot()
-    screenshot.save("screenshot.png")
-    print("Screenshot saved as screenshot.png!")
+
+    # Timestamp for filename
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"screenshot_{timestamp}.png"
+
+    screenshot.save(filename)
+    print(f"Screenshot saved as {filename}!")
 
 # Creating window
 root = tk.Tk()
@@ -34,7 +40,7 @@ root.title("Screenshot Tool")
 root.geometry("250x200")
 root.resizable(False, False)
 
-# Adding button
+# Adding buttons
 button = tk.Button(
     root,
     text="Copy to Clipboard",
@@ -61,6 +67,7 @@ button2 = tk.Button(
 button.pack(pady=10, expand=True)
 button2.pack(pady=5, expand=True)
 
+# Adding label
 made_by_label = tk.Label(
     root,
     text="Made by David White",
