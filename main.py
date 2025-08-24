@@ -49,8 +49,6 @@ def take_screenshot_save():
     else:
         print("Save cancelled.")
     
-    
-
 # Creating window
 root = tk.Tk()
 root.title("Screenshot Tool")
