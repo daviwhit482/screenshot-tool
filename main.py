@@ -3,12 +3,16 @@ import pyautogui
 import win32clipboard
 import io
 from datetime import datetime
+from tkinter import messagebox
+from tkinter import filedialog
 
 # Functions
 def take_screenshot_clipboard():
     screenshot = pyautogui.screenshot()
     copy_to_clipboard(screenshot)
     print("Screenshot was taken!")
+
+    messagebox.showinfo("Success", "Screenshot copied to clipboard!")
 
 def copy_to_clipboard(image):
     # Convert the image to bitmap format
@@ -29,10 +33,23 @@ def take_screenshot_save():
 
     # Timestamp for filename
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"screenshot_{timestamp}.png"
+    default_filename = f"screenshot_{timestamp}.png"
 
-    screenshot.save(filename)
-    print(f"Screenshot saved as {filename}!")
+    # Ask user for save location
+    filename = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        initialfile=default_filename,
+        filetypes=[("PNG files", "*.png"),("JPEG files", "*.jpg;*.jpeg"),("BMP files", "*.bmp"),("All files", "*.*")]
+    )
+
+    if filename:
+        screenshot.save(filename)
+        messagebox.showinfo("Success", f"Screenshot saved as {filename}!")
+        print(f"Screenshot saved as {filename}!")
+    else:
+        print("Save cancelled.")
+    
+    
 
 # Creating window
 root = tk.Tk()
