@@ -2,6 +2,7 @@ import tkinter as tk
 import pyautogui
 import win32clipboard
 import io
+from pynput import keyboard
 from datetime import datetime
 from tkinter import messagebox
 from tkinter import filedialog
@@ -28,6 +29,10 @@ def copy_to_clipboard(image):
 
     print("Screenshot copied to clipboard!")
 
+def on_key_press(key):
+    if key == keyboard.Key.f12:
+        take_screenshot_clipboard()
+    
 def take_screenshot_save():
     screenshot = pyautogui.screenshot()
 
@@ -48,11 +53,16 @@ def take_screenshot_save():
         print(f"Screenshot saved as {filename}!")
     else:
         print("Save cancelled.")
-    
+
+# Keyboard listener for F12 shortcut
+
+listener = keyboard.Listener(on_press=on_key_press)
+listener.start()
+
 # Creating window
 root = tk.Tk()
 root.title("Screenshot Tool")
-root.geometry("250x200")
+root.geometry("250x250")
 root.resizable(False, False)
 
 # Adding buttons
@@ -82,7 +92,17 @@ button2 = tk.Button(
 button.pack(pady=10, expand=True)
 button2.pack(pady=5, expand=True)
 
-# Adding label
+root.configure(bg="#f0f0f0")  # Light grey background
+
+# Adding labels
+
+f12_label = tk.Label(
+    root,
+    text="(Or F12 to copy to clipboard)",
+    font=("Arial", 8)
+)
+f12_label.pack(side=tk.BOTTOM, pady=10)
+
 made_by_label = tk.Label(
     root,
     text="Made by David White",
@@ -90,7 +110,6 @@ made_by_label = tk.Label(
 )
 made_by_label.pack(side=tk.BOTTOM, pady=10)
 
-root.configure(bg="#f0f0f0")  # Light grey background
-
 # Running the application
+
 root.mainloop()
