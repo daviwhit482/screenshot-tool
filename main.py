@@ -2,12 +2,58 @@ import tkinter as tk
 import pyautogui
 import win32clipboard
 import io
+import pystray
+from PIL import Image, ImageDraw
 from pynput import keyboard
 from datetime import datetime
 from tkinter import messagebox
 from tkinter import filedialog
+import threading
 
 # Functions
+
+def create_tray_icon():
+    image = Image.new('RGB', (64, 64), color='blue')
+    
+    draw = ImageDraw.Draw(image)
+    draw.rectangle([16, 20, 48, 44], fill='white')
+    draw.rectangle([20, 24, 44, 40], fill='black')
+    
+    return image
+
+def show_main_window():
+    root.deiconify()
+    root.lift()
+
+def hide_main_window():
+    root.withdraw()
+
+def exit_app():
+    tray_icon.stop()
+    root.quit()
+
+def create_tray_menu():
+    menu = pystray.Menu(
+        pystray.MenuItem('Capture Screenshot', take_screenshot_clipboard, default=True), # default=True makes it so when left clicking tray icon it does this function
+        pystray.MenuItem('Show', show_main_window),
+        pystray.MenuItem('Hide', hide_main_window),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem('Exit', exit_app)
+    )
+    return menu
+
+def start_tray_icon():
+    global tray_icon
+
+    tray_icon = pystray.Icon(
+        name = "Screenshot Tool",
+        icon = create_tray_icon(),
+        title = "Screenshot Tool - Right click for options",
+        menu=create_tray_menu()
+    )
+
+    tray_icon.run()
+
 def take_screenshot_clipboard():
     screenshot = pyautogui.screenshot()
     copy_to_clipboard(screenshot)
@@ -110,6 +156,9 @@ made_by_label = tk.Label(
 )
 made_by_label.pack(side=tk.BOTTOM, pady=10)
 
-# Running the application
+# Start tray icon in a separate thread
+tray_thread = threading.Thread(target=start_tray_icon, daemon=True)
+tray_thread.start()
 
+# Running the application
 root.mainloop()
