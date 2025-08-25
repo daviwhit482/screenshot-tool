@@ -16,6 +16,8 @@ A lightweight Windows screenshot application built with Python and Tkinter. Capt
 - ✅ **Success notifications** to confirm actions
 - 📁 **Multiple file formats** support (PNG, JPEG, BMP, GIF)
 - ⚡ **Fast and lightweight**
+- ⌨️ **Global hotkey support (F12 to capture from anywhere)**
+- 🔔 **System tray integration**
 
 ## 🚀 Quick Start
 
@@ -33,7 +35,7 @@ cd screenshot-tool
 
 2. Install required packages:
 ```bash
-pip install pyautogui pywin32
+pip install pyautogui pywin32 pillow pystray pynput
 ```
 
 3. Run the application:
@@ -59,8 +61,6 @@ Built with:
 
 ## 🔮 Upcoming Features
 
-- ⌨️ Global hotkey support (F12 to capture from anywhere)
-- 🔔 System tray integration
 - ✂️ Region selection tool
 - ⏱️ Capture delay timer
 - 🎨 Screenshot annotation tools
