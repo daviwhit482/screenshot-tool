@@ -20,7 +20,7 @@ def image_to_base64(image):
     
     image_data = buffer.getvalue()
     
-    # Convert image to text to upload to imgur
+    # Convert image to text to upload to ImgBB
     base64_text = base64.b64encode(image_data).decode('utf-8')
     
     return base64_text
