@@ -6,13 +6,62 @@ import pystray
 import threading
 import requests
 import base64
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from pynput import keyboard
 from datetime import datetime
 from tkinter import messagebox
 from tkinter import filedialog
 
 # Functions
+
+def add_watermark(image, text="github.com/daviwhit482"):
+    """Add a faint watermark to the top-right corner of the image"""
+    # Creating a copy so we don't modify the original
+    watermarked = image.copy()
+    
+    draw = ImageDraw.Draw(watermarked)
+    
+    # Loading a font with error handling
+    try:
+        font = ImageFont.truetype("arial.ttf", 20)
+    except:
+        try:
+            font = ImageFont.truetype("calibri.ttf", 20)
+        except:
+            font = ImageFont.load_default()
+    
+    # Get image dimensions
+    width, height = watermarked.size
+    
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    
+    # Moving watermark to top right
+    padding = 20
+    x = width - text_width - padding
+    y = padding
+    
+    # Adds an overlay for the text bg
+    overlay = Image.new('RGBA', watermarked.size, (255, 255, 255, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    
+    # Adds a background rectangle to the watermark
+    bg_padding = 5
+    overlay_draw.rectangle([
+        x - bg_padding, 
+        y - bg_padding, 
+        x + text_width + bg_padding, 
+        y + text_height + bg_padding
+    ], fill=(0, 0, 0, 80)) 
+    
+    # Watermark text
+    overlay_draw.text((x, y), text, font=font, fill=(255, 255, 255, 200)) # 200 is the alpha for the text (out of 255)
+    
+    # Adds the watermark on top of the screenshots
+    watermarked = Image.alpha_composite(watermarked.convert('RGBA'), overlay)
+    
+    return watermarked.convert('RGB')
 
 def image_to_base64(image):
     buffer = io.BytesIO()
@@ -115,10 +164,13 @@ def show_link_popup(url):
 def take_screenshot_upload():
     screenshot = pyautogui.screenshot()
     
-    print("Screenshot taken, uploading...")
+    # Add watermark before uploading
+    watermarked_screenshot = add_watermark(screenshot)
+    
+    print("Screenshot taken, adding watermark and uploading...")
     
     # Uses above function to upload
-    image_url = upload_to_imgbb(screenshot)
+    image_url = upload_to_imgbb(watermarked_screenshot)
     
     # Checks if the upload was successful
     if image_url:
@@ -179,8 +231,12 @@ def start_tray_icon():
 
 def take_screenshot_clipboard():
     screenshot = pyautogui.screenshot()
-    copy_to_clipboard(screenshot)
-    print("Screenshot was taken!")
+    
+    # Add watermark before copying to clipboard
+    watermarked_screenshot = add_watermark(screenshot)
+    
+    copy_to_clipboard(watermarked_screenshot)
+    print("Screenshot was taken with watermark!")
 
     messagebox.showinfo("Success", "Screenshot copied to clipboard!")
 
@@ -204,6 +260,9 @@ def on_key_press(key):
     
 def take_screenshot_save():
     screenshot = pyautogui.screenshot()
+    
+    # Add watermark before saving
+    watermarked_screenshot = add_watermark(screenshot)
 
     # Timestamp for filename
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
@@ -217,7 +276,7 @@ def take_screenshot_save():
     )
 
     if filename:
-        screenshot.save(filename)
+        watermarked_screenshot.save(filename)
         messagebox.showinfo("Success", f"Screenshot saved as {filename}!")
         print(f"Screenshot saved as {filename}!")
     else:
