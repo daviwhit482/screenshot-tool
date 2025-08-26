@@ -18,6 +18,7 @@ A lightweight Windows screenshot application built with Python and Tkinter. Capt
 - ⚡ **Fast and lightweight**
 - ⌨️ **Global hotkey support (F12 to capture from anywhere)**
 - 🔔 **System tray integration**
+- 🔗 **Share images online with option to upload image to a link**
 
 ## 🚀 Quick Start
 
